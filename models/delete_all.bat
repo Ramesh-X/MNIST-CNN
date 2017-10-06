@@ -1,0 +1,2 @@
+del checkpoint
+del *.ckpt-*

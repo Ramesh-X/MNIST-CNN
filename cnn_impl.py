@@ -72,7 +72,7 @@ def fully_connected(X, layers, out, name):
         i += 1
     w_h = weight_variable([pre_l, out], name + '_' + str(i) + '_w')
     b_h = bias_variable([out], name + '_' + str(i) + '_b')
-    return tf.nn.softmax(tf.matmul(X, w_h) + b_h)
+    return tf.matmul(X, w_h) + b_h
 
 
 def read_data() -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -180,6 +180,8 @@ def main():
 
             # And print the current accuracy on the training data.
             pre_acc = acc
+            acc = sess.run(accuracy, feed_dict={X: trX[splt:], Y: trY[splt:], pr: 1.0})
+            print('epoch: ', epoch, ', Accuracy: ', acc, ', learning_rate: ', tr_tmp)
             if acc >= pre_acc:
                 # tr_tmp *= 0.95
                 saver.save(sess, FLAGS.backup, global_step=epoch)
@@ -187,8 +189,6 @@ def main():
                 pass
                 # tr_tmp *= 1.06
             # tr_tmp = tr_tmp / (1 + 0.009*epoch) if acc > 0.95 else 1.0e-4 if acc < 0.8 else tr_tmp / (1 + 0.02*epoch)
-            acc = sess.run(accuracy, feed_dict={X: trX[splt:], Y: trY[splt:], pr: 1.0})
-            print('epoch: ', epoch, ', Accuracy: ', acc, ', learning_rate: ', tr_tmp)
             if epoch % 5 == 0:
                 acc = sess.run(accuracy, feed_dict={X: test_x, Y: test_y, pr: 1.0})
                 print('epoch: ', epoch, ', Test Accuracy: ', acc, ' : Testing on test set finished >>>>>>>>>>>')
